@@ -30,7 +30,7 @@ end
 #get the number of pitches per player
 playerids.each do |id|
   id = id[0]
-	url = "http://www.fangraphs.com/statss.aspx?playerid=#{id}&position=P&type=4&gds=&gde=&season=all"
+	url = "http://www.fangraphs.com/statsd.aspx?playerid=#{id}&position=P&type=4&gds=&gde=&season=all"
 	html = open(url)
 	pitcher_page = Nokogiri::HTML(html)
 	total_pitches = pitcher_page.xpath('//table/tbody/tr[@id="DailyStats1_dgSeason1_ctl00__0"]/td[15]').text
