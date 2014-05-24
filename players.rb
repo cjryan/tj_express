@@ -1,38 +1,28 @@
+require 'csv'
 require 'open-uri'
 require 'nokogiri'
 
-no_data = []
-avail_data = []
-playerids = []
-
-#read in players file, get player id
-players_file = File.open('../players.txt')
-
-players_file.readlines.each do |line|
-	if line !~ /playerid/
-		no_data << line
-	else
-		avail_data << line
-	end
-end
-
-avail_data.each do |player_url|
-	#TODO: Add error handling for player ids, like sa381627
-	#full url is different, too. must change regex to \w+
-	playerid = player_url.scan(/playerid=(\d+)/)
-  if playerid[0] == nil
-		next
-	else
-		playerids << playerid[0]
-	end
-end
+#Create a temporary csv file to save the updated information
+total_pitch_csv = CSV.open('../total_pitch.csv', 'w')
+#Create the CSV headers
+total_pitch_csv << ['Player', 'Player ID', 'TJ Surgery Date', 'Team', 'Majors', '# of pitches']
 
 #get the number of pitches per player
-playerids.each do |id|
-  id = id[0]
+players = CSV.foreach('../updated_tjanalysis.csv', headers:true) do |row|
+
+	#grab player id from the csv, form the url, get the page, pass it to Nokogiri
+	id = row['Player ID']
 	url = "http://www.fangraphs.com/statsd.aspx?playerid=#{id}&position=P&type=4&gds=&gde=&season=all"
 	html = open(url)
 	pitcher_page = Nokogiri::HTML(html)
+
+	#The //table/tbody is xpath syntax, the @ is a look up 
+	#where @id is the id of the row, and td[15] is the 15th cell, 
+	#or the pitching total.
 	total_pitches = pitcher_page.xpath('//table/tbody/tr[@id="DailyStats1_dgSeason1_ctl00__0"]/td[15]').text
-	puts total_pitches
+	puts row['Player'] + " " + total_pitches
+
+	#Write to the new csv file
+  updated_row =  [row['Player'], id, row['TJ Surgery Date'], row['Team'], row['Majors'], row['# of pitches']]
+  total_pitch_csv.puts updated_row
 end
