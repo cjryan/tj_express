@@ -1,6 +1,5 @@
 require 'csv'
 
-player_avail = []
 playerids = []
 play_count = 0
 #read in players file, get player id
