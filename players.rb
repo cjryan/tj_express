@@ -6,13 +6,17 @@ require 'nokogiri'
 total_pitch_csv = CSV.open('../total_pitch.csv', 'w')
 #Create the CSV headers
 total_pitch_csv << ['Player', 'Player ID', 'TJ Surgery Date', 'Team', 'Majors', '# of pitches']
-
 #get the number of pitches per player
 players = CSV.foreach('../updated_tjanalysis.csv', headers:true) do |row|
-
 	#grab player id from the csv, form the url, get the page, pass it to Nokogiri
 	id = row['Player ID']
-	url = "http://www.fangraphs.com/statsd.aspx?playerid=#{id}&position=P&type=4&gds=&gde=&season=all"
+
+	#Convert date. The given date from the CSV is 5/20/2014. It needs to be
+	#2014-05-19 for the url. 
+	raw_end_date = row['TJ Surgery Date']
+	end_date = raw_end_date.split('/').reverse.join("-")
+	url = "http://www.fangraphs.com/statsd.aspx?playerid=#{id}&position=P&type=4&gds=&gde=#{end_date}&season=all"
+	puts url
 	html = open(url)
 	pitcher_page = Nokogiri::HTML(html)
 
@@ -23,6 +27,6 @@ players = CSV.foreach('../updated_tjanalysis.csv', headers:true) do |row|
 	puts row['Player'] + " " + total_pitches
 
 	#Write to the new csv file
-  updated_row =  [row['Player'], id, row['TJ Surgery Date'], row['Team'], row['Majors'], row['# of pitches']]
+  updated_row =  [row['Player'], id, row['TJ Surgery Date'], row['Team'], row['Majors'], total_pitches]
   total_pitch_csv.puts updated_row
 end

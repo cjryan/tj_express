@@ -15,9 +15,9 @@ players_file.readlines.each do |line|
 	end
 end
 
-updated_csv = CSV.open('../updated_tjanalysis.csv', 'w')
+updated_csv = CSV.open('../updated_tjanalysis.csv', 'w', encoding: "utf-8")
 updated_csv << ['Player', 'Player ID', 'TJ Surgery Date', 'Team', 'Majors']
-players = CSV.foreach('../tjanalysis.csv', headers:true) do |row|
+players = CSV.foreach('../tjanalysis.csv', headers:true, encoding: "utf-8") do |row|
 	updated_row =  [row['Player'], playerids[play_count][0], row['TJ Surgery Date'], row['Team'], row['Majors']]
 	updated_csv.puts updated_row
 	play_count = play_count + 1
