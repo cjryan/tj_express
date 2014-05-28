@@ -19,8 +19,8 @@ players = CSV.foreach('../updated_tjanalysis.csv', headers:true) do |row|
 		#2014-05-19 for the url. 
 		raw_end_date = row['TJ Surgery Date']
 		end_date = raw_end_date.split('/').reverse.join("-")
-		start_date = 1900-01-01
-		url = "http://www.fangraphs.com/statsd.aspx?playerid=#{id}&position=P&type=4&gds=#{start_date}&gde=#{end_date}&season=all"
+		start_date = '1990-01-01'
+		url = "http://www.fangraphs.com/statsd.aspx?playerid=#{id}&position=P&type=4&gds=&gde=#{end_date}&season=all"
 		puts url
 		html = open(url)
 		pitcher_page = Nokogiri::HTML(html)
@@ -31,10 +31,10 @@ players = CSV.foreach('../updated_tjanalysis.csv', headers:true) do |row|
 		total_pitches = pitcher_page.xpath('//table/tbody/tr[@id="DailyStats1_dgSeason1_ctl00__0"]/td[15]').text
 		puts row['Player'] + " " + total_pitches
 		
-		url = "http://www.fangraphs.com/statsd.aspx?playerid=#{id}&position=P&type=6&gds=&gde=#{end_date}&season=all"
+		url = "http://www.fangraphs.com/statsd.aspx?playerid=#{id}&position=P&type=6&gds=#{start_date}&gde=#{end_date}&season=all"
 		puts url
 		html = open(url)
-		pitcher_page = Nokogiri::HTML(html)
+		pitcher_page= Nokogiri::HTML(html)
 		
 		pitch_type_1 = pitcher_page.xpath('//table/tbody/tr[@id="DailyStats1_dgSeason1_ctl00__0"]/td[5]').text
 		pitch_type_2 = pitcher_page.xpath('//table/tbody/tr[@id="DailyStats1_dgSeason1_ctl00__0"]/td[6]').text
@@ -52,7 +52,7 @@ players = CSV.foreach('../updated_tjanalysis.csv', headers:true) do |row|
 		pitch_type_14 = pitcher_page.xpath('//table/tbody/tr[@id="DailyStats1_dgSeason1_ctl00__0"]/td[18]').text
 		pitch_type_15 = pitcher_page.xpath('//table/tbody/tr[@id="DailyStats1_dgSeason1_ctl00__0"]/td[19]').text
 
-
+		puts row['Player'] + " " + total_pitches + pitch_type_1 + pitch_type_2 + pitch_type_3 + pitch_type_4 + pitch_type_5 + pitch_type_6 + pitch_type_7 + pitch_type_8 + pitch_type_9 + pitch_type_10 + pitch_type_11 + pitch_type_12 + pitch_type_13 + pitch_type_14 + pitch_type_15
 		#Write to the new csv file
 		updated_row =  [row['Player'], id, row['TJ Surgery Date'], row['Team'], row['Majors'], total_pitches, pitch_type_1, pitch_type_2, pitch_type_3, pitch_type_4, pitch_type_5, pitch_type_6, pitch_type_7, pitch_type_8, pitch_type_9, pitch_type_10, pitch_type_11, pitch_type_12, pitch_type_13, pitch_type_14, pitch_type_15]
 		total_pitch_csv.puts updated_row
