@@ -1,6 +1,7 @@
 require 'csv'
 require 'open-uri'
 require 'nokogiri'
+require 'date'
 
 #updated 5-28-14 by GLP
 #Create a temporary csv file to save the updated information
@@ -18,8 +19,8 @@ players = CSV.foreach('../updated_tjanalysis.csv', headers:true) do |row|
 		#Convert date. The given date from the CSV is 5/20/2014. It needs to be
 		#2014-05-19 for the url. 
 		raw_end_date = row['TJ Surgery Date']
-		end_date = raw_end_date.split('/').reverse.join("-")
-		start_date = '1990-01-01'
+		end_date = Date.strptime(raw_end_date, '%m/%d/%Y').strftime('%Y-%m-%d')
+		start_date = "1990-01-01"
 		url = "http://www.fangraphs.com/statsd.aspx?playerid=#{id}&position=P&type=4&gds=&gde=#{end_date}&season=all"
 		puts url
 		html = open(url)
