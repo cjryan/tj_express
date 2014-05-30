@@ -21,7 +21,7 @@ players = CSV.foreach('../updated_tjanalysis.csv', headers:true) do |row|
 		raw_end_date = row['TJ Surgery Date']
 		end_date = Date.strptime(raw_end_date, '%m/%d/%Y').strftime('%Y-%m-%d')
 		start_date = "1990-01-01"
-		url = "http://www.fangraphs.com/statsd.aspx?playerid=#{id}&position=P&type=4&gds=&gde=#{end_date}&season=all"
+		url = "http://www.fangraphs.com/statsd.aspx?playerid=#{id}&position=P&type=4&gds=#{start_date}&gde=#{end_date}&season=all"
 		puts url
 		html = open(url)
 		pitcher_page = Nokogiri::HTML(html)
