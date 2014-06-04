@@ -5,9 +5,9 @@ require 'date'
 
 #updated 5-28-14 by GLP
 #Create a temporary csv file to save the updated information
-total_pitch_csv = CSV.open('../total_pitch.csv', 'w')
+postTJ_pitch_csv = CSV.open('../postTJ_pitch.csv', 'w')
 #Create the CSV headers
-total_pitch_csv << ['Player', 'Player ID', 'TJ Surgery Date', 'Team', 'Majors', '# of pitches', 'FB%', 'FBv', 'SL%', 'SLv', 'CT%', 'CTv', 'CB%', 'CBv', 'CH%', 'CHv', 'SF%', 'SFv', 'KN%', 'KNv', 'XX%']
+postTJ_pitch_csv << ['Player', 'Player ID', 'TJ Surgery Date', 'End date', 'Team', 'Majors', '# of pitches', 'FB%', 'FBv', 'SL%', 'SLv', 'CT%', 'CTv', 'CB%', 'CBv', 'CH%', 'CHv', 'SF%', 'SFv', 'KN%', 'KNv', 'XX%']
 #get the number of pitches per player
 players = CSV.foreach('../updated_tjanalysis.csv', headers:true) do |row|
 	#grab player id from the csv, form the url, get the page, pass it to Nokogiri
@@ -18,9 +18,10 @@ players = CSV.foreach('../updated_tjanalysis.csv', headers:true) do |row|
 
 		#Convert date. The given date from the CSV is 5/20/2014. It needs to be
 		#2014-05-19 for the url. 
-		raw_end_date = row['TJ Surgery Date']
+		raw_start_date = row['TJ Surgery Date']
+		start_date = Date.strptime(raw_start_date, '%m/%d/%Y').strftime('%Y-%m-%d')
+		raw_end_date = row['End date']
 		end_date = Date.strptime(raw_end_date, '%m/%d/%Y').strftime('%Y-%m-%d')
-		start_date = "1990-01-01"
 		url = "http://www.fangraphs.com/statsd.aspx?playerid=#{id}&position=P&type=4&gds=#{start_date}&gde=#{end_date}&season=all"
 		puts url
 		html = open(url)
@@ -56,6 +57,6 @@ players = CSV.foreach('../updated_tjanalysis.csv', headers:true) do |row|
 		puts row['Player'] + " " + total_pitches + pitch_type_1 + pitch_type_2 + pitch_type_3 + pitch_type_4 + pitch_type_5 + pitch_type_6 + pitch_type_7 + pitch_type_8 + pitch_type_9 + pitch_type_10 + pitch_type_11 + pitch_type_12 + pitch_type_13 + pitch_type_14 + pitch_type_15
 		#Write to the new csv file
 		updated_row =  [row['Player'], id, row['TJ Surgery Date'], row['Team'], row['Majors'], total_pitches, pitch_type_1, pitch_type_2, pitch_type_3, pitch_type_4, pitch_type_5, pitch_type_6, pitch_type_7, pitch_type_8, pitch_type_9, pitch_type_10, pitch_type_11, pitch_type_12, pitch_type_13, pitch_type_14, pitch_type_15]
-		total_pitch_csv.puts updated_row
+		postTJ_pitch_csv.puts updated_row
 	end
 end
